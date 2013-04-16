@@ -1,8 +1,8 @@
 GIT
   remote: git@github.com:cgservices/officer.git
-  revision: a74fdb5e3a133ecf64d873397ff305725352d65e
+  revision: 8c4db5694443d2080e9014012c519d718b0c894b
   specs:
-    officer (0.10.3)
+    officer (0.10.4)
       choice
       daemons
       eventmachine

@@ -11,7 +11,7 @@ describe CgSemaphore do
 
   describe "COMMAND: lock" do
     before do
-      @semaphore = new CgSemaphore::Semaphore()
+      @semaphore = CgSemaphore::Semaphore.new 9
     end
 
     after do
@@ -19,7 +19,11 @@ describe CgSemaphore do
     end
 
     it "should return blaat" do
-      @semaphore.lock("testlock").should eq("blaat")
+      #@semaphore.lock("testlock").should eq("blaat")
+      @semaphore.with_lock("testlock") do
+        puts "body of code within lock"
+        raise "Argh"
+      end
     end
   end
 end

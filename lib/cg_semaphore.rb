@@ -3,9 +3,15 @@ require 'cg_semaphore/semaphore'
 require 'cg_semaphore/mutex'
 
 module CgSemaphore
-  mattr_accessor :namespace, :officer_host, :officer_port
+  @@namespace
+  @@officer_host
+  @@officer_port
 
-  def namespace
-    self.namespace ||= "blaat"
+  def self.namespace
+    @@namespace ||= "blaat"
+  end
+
+  def self.namespace=(ns)
+    @@namespace = ns
   end
 end
