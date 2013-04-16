@@ -1,0 +1,42 @@
+GIT
+  remote: git@github.com:cgservices/officer.git
+  revision: a74fdb5e3a133ecf64d873397ff305725352d65e
+  specs:
+    officer (0.10.3)
+      choice
+      daemons
+      eventmachine
+      json
+
+PATH
+  remote: .
+  specs:
+    cg_semaphore (0.0.1pre)
+      officer
+
+GEM
+  remote: https://rubygems.org/
+  specs:
+    choice (0.1.6)
+    daemons (1.1.9)
+    diff-lcs (1.2.3)
+    eventmachine (1.0.3)
+    json (1.7.7)
+    rake (10.0.4)
+    rspec (2.13.0)
+      rspec-core (~> 2.13.0)
+      rspec-expectations (~> 2.13.0)
+      rspec-mocks (~> 2.13.0)
+    rspec-core (2.13.1)
+    rspec-expectations (2.13.0)
+      diff-lcs (>= 1.1.3, < 2.0)
+    rspec-mocks (2.13.1)
+
+PLATFORMS
+  ruby
+
+DEPENDENCIES
+  cg_semaphore!
+  officer!
+  rake
+  rspec

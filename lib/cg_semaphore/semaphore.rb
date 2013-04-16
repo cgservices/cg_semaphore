@@ -9,6 +9,7 @@ module CgSemaphore
     end
 
     def lock name
+      "blaat"
     end
 
     def try_lock name
