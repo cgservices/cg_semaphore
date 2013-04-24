@@ -1,27 +1,29 @@
 module CgSemaphore
   class Semaphore
-    attr_accessor :size
+    attr_reader :name
+    attr_reader :size
 
-    def initialize size
+    def initialize name, size
+      @name = name
       @size = size
     end
 
-    def lock name
+    def lock
       raise "lock not implemented"
     end
 
-    def try_lock name
+    def try_lock
       raise "try_lock not implemented"
     end
 
-    def unlock name
+    def unlock
       raise "unlock not implemented"
     end
 
-    def with_lock name
+    def with_lock
       raise_unlock_exception = true
 
-      lock name
+      lock
 
       begin
         yield
@@ -33,7 +35,7 @@ module CgSemaphore
         raise
       ensure
         begin
-          unlock name
+          unlock
         rescue Exception
           # Exception rescued while unlocking. Only re-raise this if no exception was rescued during yield.
           raise if raise_unlock_exception
@@ -41,10 +43,10 @@ module CgSemaphore
       end
     end
 
-    def with_try_lock name
+    def with_try_lock
       raise_unlock_exception = true
 
-      if try_lock name
+      if try_lock
         begin
           yield
         rescue Exception
@@ -55,7 +57,7 @@ module CgSemaphore
           raise
         ensure
           begin
-            unlock name
+            unlock
           rescue Exception
             # Exception rescued while unlocking. Only re-raise this if no exception was rescued during yield.
             raise if raise_unlock_exception

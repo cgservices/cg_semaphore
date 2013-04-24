@@ -1,9 +1,9 @@
-require File.expand_path(File.dirname(__FILE__) + '/../spec_helper')
+require File.expand_path(File.dirname(__FILE__) + '/../../spec_helper')
 require 'cg_semaphore/semaphore'
 
 describe CgSemaphore::Semaphore do
   before do
-    @semaphore = CgSemaphore::Semaphore.new 3
+    @semaphore = CgSemaphore::Semaphore.new "testlock", 3
     @semaphore.stub(:unlock) { true }
   end
 
@@ -16,8 +16,8 @@ describe CgSemaphore::Semaphore do
   describe "#with_lock" do
     it "should lock" do
       @semaphore.stub(:lock) { false }
-      @semaphore.should_receive(:lock).with('testlock')
-      @semaphore.with_lock('testlock') {  }
+      @semaphore.should_receive(:lock).once
+      @semaphore.with_lock {  }
     end
 
     context "when locking succeeds" do
@@ -26,25 +26,25 @@ describe CgSemaphore::Semaphore do
       end
 
       it "should execture the block" do
-        block_called = false
-        @semaphore.with_lock('testlock') { block_called = true }
-        block_called.should be_true
+        block_executed = false
+        @semaphore.with_lock { block_executed = true }
+        block_executed.should be_true
       end
 
       it "should unlock" do
-        @semaphore.should_receive(:unlock).with('testlock')
-        @semaphore.with_lock('testlock') { }
+        @semaphore.should_receive(:unlock).once
+        @semaphore.with_lock { }
       end
 
       context "and the block raises an exception" do
         it "should raise the block's exception" do
-          lambda{@semaphore.with_lock('testlock') { raise StandardError.new("block exception") }}.should raise_error(StandardError, "block exception")
+          lambda{@semaphore.with_lock { raise StandardError.new("block exception") }}.should raise_error(StandardError, "block exception")
         end
 
         context "and the unlock raises an exception" do
           it "should raise the block's exception" do
             @semaphore.stub(:unlock) { raise "unlock exception" }
-            lambda{@semaphore.with_lock('testlock') { raise StandardError.new("block exception") }}.should raise_error(StandardError, "block exception")
+            lambda{@semaphore.with_lock { raise StandardError.new("block exception") }}.should raise_error(StandardError, "block exception")
           end
         end
       end
@@ -56,20 +56,20 @@ describe CgSemaphore::Semaphore do
       end
 
       it "should not execute the block" do
-        block_called = false
+        block_executed = false
 
         begin
-          @semaphore.with_lock('testlock') { block_called = true }
+          @semaphore.with_lock { block_executed = true }
         rescue
         end
-        block_called.should be_false
+        block_executed.should be_false
       end
 
       it "should not unlock" do
-        @semaphore.should_not_receive(:unlock).with('testlock')
+        @semaphore.should_not_receive(:unlock)
 
         begin
-          @semaphore.with_lock('testlock') { }
+          @semaphore.with_lock { }
         rescue
         end
       end
@@ -79,8 +79,8 @@ describe CgSemaphore::Semaphore do
   describe "#with_try_lock" do
     it "should try_lock" do
       @semaphore.stub(:try_lock) { false }
-      @semaphore.should_receive(:try_lock).with('testlock')
-      @semaphore.with_try_lock('testlock') {  }
+      @semaphore.should_receive(:try_lock).once
+      @semaphore.with_try_lock {  }
     end
 
     context "when locking succeeds" do
@@ -89,25 +89,25 @@ describe CgSemaphore::Semaphore do
       end
 
       it "should execture the block" do
-        block_called = false
-        @semaphore.with_try_lock('testlock') { block_called = true }
-        block_called.should be_true
+        block_executed = false
+        @semaphore.with_try_lock { block_executed = true }
+        block_executed.should be_true
       end
 
       it "should unlock" do
-        @semaphore.should_receive(:unlock).with('testlock')
-        @semaphore.with_try_lock('testlock') { }
+        @semaphore.should_receive(:unlock).once
+        @semaphore.with_try_lock { }
       end
 
       context "and the block raises an exception" do
         it "should raise the block's exception" do
-          lambda{@semaphore.with_try_lock('testlock') { raise StandardError.new("block exception") }}.should raise_error(StandardError, "block exception")
+          lambda{@semaphore.with_try_lock { raise StandardError.new("block exception") }}.should raise_error(StandardError, "block exception")
         end
 
         context "and the unlock raises an exception" do
           it "should raise the block's exception" do
             @semaphore.stub(:unlock) { raise "unlock exception" }
-            lambda{@semaphore.with_try_lock('testlock') { raise StandardError.new("block exception") }}.should raise_error(StandardError, "block exception")
+            lambda{@semaphore.with_try_lock { raise StandardError.new("block exception") }}.should raise_error(StandardError, "block exception")
           end
         end
       end
@@ -116,20 +116,20 @@ describe CgSemaphore::Semaphore do
 
     shared_context "when locking does not succeed" do
       it "should not execute the block" do
-        block_called = false
+        block_executed = false
 
         begin
-          @semaphore.with_try_lock('testlock') { block_called = true }
+          @semaphore.with_try_lock { block_executed = true }
         rescue
         end
-        block_called.should be_false
+        block_executed.should be_false
       end
 
       it "should not unlock" do
-        @semaphore.should_not_receive(:unlock).with('testlock')
+        @semaphore.should_not_receive(:unlock)
 
         begin
-          @semaphore.with_try_lock('testlock') { }
+          @semaphore.with_try_lock { }
         rescue
         end
       end

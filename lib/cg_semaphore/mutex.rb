@@ -1,7 +1,7 @@
 module CgSemaphore
-  class Mutex < Semaphore
-    def initialize
-      super(1)
+  class Mutex < OwnedSemaphore
+    def initialize name
+      super name, 1
     end
   end
 end
