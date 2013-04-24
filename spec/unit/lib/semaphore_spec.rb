@@ -38,13 +38,13 @@ describe CgSemaphore::Semaphore do
 
       context "and the block raises an exception" do
         it "should raise the block's exception" do
-          lambda{@semaphore.with_lock { raise StandardError.new("block exception") }}.should raise_error(StandardError, "block exception")
+          lambda{@semaphore.with_lock { raise StandardError.new("block exception") }}.should raise_exception(StandardError, "block exception")
         end
 
         context "and the unlock raises an exception" do
           it "should raise the block's exception" do
             @semaphore.stub(:unlock) { raise "unlock exception" }
-            lambda{@semaphore.with_lock { raise StandardError.new("block exception") }}.should raise_error(StandardError, "block exception")
+            lambda{@semaphore.with_lock { raise StandardError.new("block exception") }}.should raise_exception(StandardError, "block exception")
           end
         end
       end
@@ -101,13 +101,13 @@ describe CgSemaphore::Semaphore do
 
       context "and the block raises an exception" do
         it "should raise the block's exception" do
-          lambda{@semaphore.with_try_lock { raise StandardError.new("block exception") }}.should raise_error(StandardError, "block exception")
+          lambda{@semaphore.with_try_lock { raise StandardError.new("block exception") }}.should raise_exception(StandardError, "block exception")
         end
 
         context "and the unlock raises an exception" do
           it "should raise the block's exception" do
             @semaphore.stub(:unlock) { raise "unlock exception" }
-            lambda{@semaphore.with_try_lock { raise StandardError.new("block exception") }}.should raise_error(StandardError, "block exception")
+            lambda{@semaphore.with_try_lock { raise StandardError.new("block exception") }}.should raise_exception(StandardError, "block exception")
           end
         end
       end

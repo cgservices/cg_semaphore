@@ -1,13 +1,13 @@
 PATH
   remote: .
   specs:
-    cg_semaphore (0.0.1pre)
+    cg_semaphore (0.1.0)
       officer
 
 PATH
   remote: /Users/raarle/Development/Ruby Projects/officer
   specs:
-    officer (0.10.4)
+    officer (0.11.0)
       choice
       daemons
       eventmachine

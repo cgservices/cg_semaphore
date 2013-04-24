@@ -38,6 +38,11 @@ describe CgSemaphore::Officer::OwnedSemaphore do
       @semaphore.lock
       @testSemaphore.try_lock.should be_false
     end
+
+    it "should raise an exception if not connected" do
+      CgSemaphore::Officer.client.disconnect
+      @semaphore.lock.should raise_exception
+    end
   end
 
   describe "#try_lock" do
@@ -48,6 +53,11 @@ describe CgSemaphore::Officer::OwnedSemaphore do
     it "should prevent another semaphore with same name to lock" do
       @semaphore.try_lock
       @testSemaphore.try_lock.should be_false
+    end
+
+    it "should raise an exception if not connected" do
+      CgSemaphore::Officer.client.disconnect
+      @semaphore.try_lock.should raise_exception
     end
   end
 
