@@ -1,9 +1,12 @@
 require File.expand_path(File.dirname(__FILE__) + '/../../spec_helper')
-require 'cg_semaphore/semaphore'
 
-describe CgSemaphore::Semaphore do
+describe CgSemaphore::Semaphorify do
   before do
-    @semaphore = CgSemaphore::Semaphore.new "testlock", 3
+    class SemaphoriedDummyClass
+      include CgSemaphore::Semaphorify
+    end
+
+    @semaphore = SemaphoriedDummyClass.new "testlock", 3
     @semaphore.stub(:unlock) { true }
   end
 

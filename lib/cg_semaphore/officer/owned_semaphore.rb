@@ -1,6 +1,7 @@
 module CgSemaphore
   module Officer
-    class OwnedSemaphore < CgSemaphore::OwnedSemaphore
+    class OwnedSemaphore
+      include CgSemaphore::Semaphorify
 
       # possibility to override the client
       attr_accessor :client

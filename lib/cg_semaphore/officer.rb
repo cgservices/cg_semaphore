@@ -1,5 +1,6 @@
 require 'officer'
 require 'cg_semaphore/officer/owned_semaphore'
+require 'cg_semaphore/officer/mutex'
 
 module CgSemaphore
   module Officer
