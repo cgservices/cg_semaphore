@@ -22,7 +22,7 @@ notified about this surpressed exception, a callback can be defined:
 
 Basic usage of the semaphore:
 
-    semaphore = CgSemaphore::Semaphore.new "testlock", 3
+    semaphore = CgSemaphore::OwnedSemaphore.new "testlock", 3
 
     semaphore.with_lock do
       # execture dangerous code
