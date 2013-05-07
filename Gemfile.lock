@@ -1,17 +1,18 @@
-PATH
-  remote: .
-  specs:
-    cg_semaphore (0.1.0)
-      officer
-
-PATH
-  remote: /Users/raarle/Development/Ruby Projects/officer
+GIT
+  remote: git@github.com:cgservices/officer.git
+  revision: b4cf3a9905bef39958d542db5a8889af8409a2ff
   specs:
     officer (0.11.0)
       choice
       daemons
       eventmachine
       json
+
+PATH
+  remote: .
+  specs:
+    cg_semaphore (0.9.0)
+      officer
 
 GEM
   remote: https://rubygems.org/

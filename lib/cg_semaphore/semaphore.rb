@@ -4,7 +4,7 @@ module CgSemaphore
     @@rescue_surpressed_exception = lambda { |e, s| }
     @@semaphore_class = nil
 
-    def initialize name, size, surpressed=true
+    def initialize name, size, surpressed=false
       @surpressed = surpressed
       @semaphore = create_semaphore name, size
     end

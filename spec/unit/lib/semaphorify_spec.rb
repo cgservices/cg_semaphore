@@ -1,6 +1,7 @@
 require File.expand_path(File.dirname(__FILE__) + '/../../spec_helper')
+require 'cg_semaphore/semaphore'
 
-describe CgSemaphore::Semaphorify do
+describe CgSemaphore::Semaphore do
   before do
     class SemaphoriedDummyClass
       include CgSemaphore::Semaphorify
@@ -13,6 +14,12 @@ describe CgSemaphore::Semaphorify do
   describe "#size" do
     it "should have the same value as upon initializing" do
       @semaphore.size.should == 3
+    end
+  end
+
+  describe "#name" do
+    it "should have the same value as upon initializing" do
+      @semaphore.name.should == "testlock"
     end
   end
 
@@ -41,13 +48,13 @@ describe CgSemaphore::Semaphorify do
 
       context "and the block raises an exception" do
         it "should raise the block's exception" do
-          lambda{@semaphore.with_lock { raise StandardError.new("block exception") }}.should raise_exception(StandardError, "block exception")
+          expect{@semaphore.with_lock { raise StandardError.new("block exception") }}.to raise_exception(StandardError, "block exception")
         end
 
         context "and the unlock raises an exception" do
           it "should raise the block's exception" do
             @semaphore.stub(:unlock) { raise "unlock exception" }
-            lambda{@semaphore.with_lock { raise StandardError.new("block exception") }}.should raise_exception(StandardError, "block exception")
+            expect{@semaphore.with_lock { raise StandardError.new("block exception") }}.to raise_exception(StandardError, "block exception")
           end
         end
       end
@@ -104,13 +111,13 @@ describe CgSemaphore::Semaphorify do
 
       context "and the block raises an exception" do
         it "should raise the block's exception" do
-          lambda{@semaphore.with_try_lock { raise StandardError.new("block exception") }}.should raise_exception(StandardError, "block exception")
+          expect{@semaphore.with_try_lock { raise StandardError.new("block exception") }}.to raise_exception(StandardError, "block exception")
         end
 
         context "and the unlock raises an exception" do
           it "should raise the block's exception" do
             @semaphore.stub(:unlock) { raise "unlock exception" }
-            lambda{@semaphore.with_try_lock { raise StandardError.new("block exception") }}.should raise_exception(StandardError, "block exception")
+            expect{@semaphore.with_try_lock { raise StandardError.new("block exception") }}.to raise_exception(StandardError, "block exception")
           end
         end
       end
