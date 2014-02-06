@@ -11,7 +11,7 @@ Gem::Specification.new do |gem|
   gem.require_paths = ['lib']
   gem.version       = "0.9.0"
 
-  gem.add_dependency("officer", ['>= 0.11'])
+  gem.add_dependency("officer", ['>= 0.11.0'])
   gem.add_development_dependency('rake', ['>= 0'])
   gem.add_development_dependency('rspec', ['>= 0'])
 end
