@@ -29,13 +29,14 @@ module CgSemaphore
       end
 
       private
-        def proper_client
-          @client || Officer.client
-        end
 
-        def build_name
-          "#{@name}|#{@size}"
-        end
+      def proper_client
+        @client || Officer.client
+      end
+
+      def build_name
+        "#{@name}|#{@size}"
+      end
 
     end
   end

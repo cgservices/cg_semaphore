@@ -11,8 +11,8 @@ GIT
 PATH
   remote: .
   specs:
-    cg_semaphore (0.9.0)
-      officer
+    cg_semaphore (0.10.0)
+      officer (>= 0.11.0)
 
 GEM
   remote: https://rubygems.org/
@@ -40,3 +40,6 @@ DEPENDENCIES
   officer!
   rake
   rspec
+
+BUNDLED WITH
+   1.14.6

@@ -12,7 +12,7 @@ describe CgSemaphore::Officer::OwnedSemaphore do
 
     # using semaphore with an other client for testing
     @testSemaphore = CgSemaphore::Officer::OwnedSemaphore.new "testlock", 1
-    @testSemaphore.client =  Officer::Client.new
+    @testSemaphore.client = Officer::Client.new
 
     # wait until the server is running
     while !@server.running?; end
