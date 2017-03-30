@@ -43,6 +43,8 @@ module CgSemaphore
       result = false
       begin
         result = @semaphore.try_lock
+        @lock_index = result if result
+        result = true if result
       rescue Exception => e
         handle_exception e
         result = true # will only be reached if surpressed

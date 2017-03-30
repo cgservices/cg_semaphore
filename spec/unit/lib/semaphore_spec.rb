@@ -26,7 +26,7 @@ describe CgSemaphore::Semaphore do
   describe "#lock" do
     it "should call lock on wrapped semaphore" do
       @wrappedSemaphore.stub(:lock) { }
-      @semaphore.should_receive(:lock).once
+      @wrappedSemaphore.should_receive(:lock).once
       @semaphore.lock
     end
 
@@ -40,7 +40,7 @@ describe CgSemaphore::Semaphore do
   describe "#try_lock" do
     it "should call try_lock on wrapped semaphore" do
       @wrappedSemaphore.stub(:try_lock) { false }
-      @semaphore.should_receive(:try_lock).once
+      @wrappedSemaphore.should_receive(:try_lock).once
       @semaphore.try_lock
     end
   end
@@ -48,7 +48,7 @@ describe CgSemaphore::Semaphore do
   describe "#unlock" do
     it "should call unlock on wrapped semaphore" do
       @wrappedSemaphore.stub(:unlock) { }
-      @semaphore.should_receive(:unlock).once
+      @wrappedSemaphore.should_receive(:unlock).once
       @semaphore.unlock
     end
   end
@@ -65,6 +65,12 @@ describe CgSemaphore::Semaphore do
       it "should forward the exception" do
         @wrappedSemaphore.stub(:try_lock) { raise StandardError.new('This exception should be forwarded.')  }
         expect { @semaphore.try_lock }.to raise_exception(StandardError, 'This exception should be forwarded.')
+      end
+
+      it "should store the lock index" do
+        @wrappedSemaphore.stub(:try_lock) { '123' }
+        @semaphore.try_lock
+        @semaphore.lock_index.should eq '123'
       end
     end
 
@@ -123,6 +129,13 @@ describe CgSemaphore::Semaphore do
         rescue
         end
         block_executed.should be_false
+      end
+
+      it "should store the lock index" do
+        @wrappedSemaphore.stub(:try_lock) { '123' }
+        @wrappedSemaphore.stub(:unlock) { true }
+        @semaphore.with_try_lock {}
+        @semaphore.lock_index.should eq '123'
       end
 
       it "should forward the block exception" do
