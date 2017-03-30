@@ -4,6 +4,9 @@ module CgSemaphore
       super name, 1, surpressed
     end
 
+    # possibility to override the client
+    attr_accessor :client
+
     @@mutex_class = nil
 
     def self.mutex_class= mutex_class
