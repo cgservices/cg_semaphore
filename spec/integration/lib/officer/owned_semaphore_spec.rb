@@ -34,6 +34,10 @@ describe CgSemaphore::Officer::OwnedSemaphore do
       @semaphore.try_lock.should be_true
     end
 
+    it "should return the lock index" do
+      @semaphore.lock.should eq '0'
+    end
+
     it "should prevent another semaphore with same name to lock" do
       @semaphore.lock
       @testSemaphore.try_lock.should be_false

@@ -2,7 +2,6 @@ require File.expand_path(File.dirname(__FILE__) + '/../../spec_helper')
 
 describe CgSemaphore::Semaphore do
   before do
-
     class SemaphoriedDummyClass
       include CgSemaphore::Semaphorify
     end
@@ -29,6 +28,12 @@ describe CgSemaphore::Semaphore do
       @wrappedSemaphore.stub(:lock) { }
       @semaphore.should_receive(:lock).once
       @semaphore.lock
+    end
+
+    it "should store the lock index" do
+      @wrappedSemaphore.stub(:lock) { '0' }
+      @semaphore.lock
+      @semaphore.lock_index.should eq '0'
     end
   end
 

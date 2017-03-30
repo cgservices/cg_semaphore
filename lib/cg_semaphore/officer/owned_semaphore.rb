@@ -15,6 +15,8 @@ module CgSemaphore
         raise ::Officer::LockTimeoutError.new("queue=#{queue}") if result == 'timed_out'
         raise ::Officer::LockQueuedMaxError.new("queue=#{queue}") if result == 'queue_maxed'
         raise ::Officer::LockError unless %w(acquired already_acquired).include?(result)
+
+        response['id']
       end
 
       def try_lock
