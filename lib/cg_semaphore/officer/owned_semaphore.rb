@@ -20,7 +20,7 @@ module CgSemaphore
       end
 
       def try_lock
-        response = proper_client.lock build_name, {:timeout => Officer.timeout, :queue_max => 1}
+        response = proper_client.lock build_name, {:timeout => Officer.timeout, :queue_max => @size}
         return response['id'] if response['name'] == build_name && response['result'] == "acquired"
         false
       end

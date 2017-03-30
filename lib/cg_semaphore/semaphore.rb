@@ -33,7 +33,8 @@ module CgSemaphore
 
     def lock
       begin
-        @lock_index = @semaphore.lock
+        result = @semaphore.lock
+        @lock_index = result unless result.nil?
       rescue Exception => e
         handle_exception e
       end
@@ -55,6 +56,7 @@ module CgSemaphore
     def unlock
       begin
         @semaphore.unlock
+        @lock_index = nil
       rescue Exception => e
         handle_exception e
       end

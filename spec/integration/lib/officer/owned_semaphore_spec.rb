@@ -14,6 +14,9 @@ describe CgSemaphore::Officer::OwnedSemaphore do
     @testSemaphore = CgSemaphore::Officer::OwnedSemaphore.new "testlock", 2
     @testSemaphore.client = Officer::Client.new
 
+    @tryLockSemaphore = CgSemaphore::Officer::OwnedSemaphore.new "testlock", 2
+    @tryLockSemaphore.client = Officer::Client.new
+
     # wait until the server is running
     while !@server.running?; end
   end
@@ -35,9 +38,6 @@ describe CgSemaphore::Officer::OwnedSemaphore do
     end
 
     it "should return the correct lock index" do
-      @tryLockSemaphore = CgSemaphore::Officer::OwnedSemaphore.new "testlock", 2
-      @tryLockSemaphore.client = Officer::Client.new
-
       @semaphore.lock.should eq '0'
       @testSemaphore.lock.should eq '1'
       @semaphore.lock.should be_nil
@@ -45,8 +45,9 @@ describe CgSemaphore::Officer::OwnedSemaphore do
     end
 
     it "should prevent another semaphore with same name to lock" do
-      @semaphore.lock
-      @testSemaphore.try_lock.should be_false
+      @semaphore.lock.should eq '0'
+      @testSemaphore.lock.should eq '1'
+      @tryLockSemaphore.try_lock.should be_false
     end
 
     it "should raise an exception if not connected" do
@@ -62,7 +63,8 @@ describe CgSemaphore::Officer::OwnedSemaphore do
 
     it "should prevent another semaphore with same name to lock" do
       @semaphore.try_lock
-      @testSemaphore.try_lock.should be_false
+      @testSemaphore.try_lock
+      @tryLockSemaphore.try_lock.should be_false
     end
 
     it "should raise an exception if not connected" do
@@ -97,7 +99,8 @@ describe CgSemaphore::Officer::OwnedSemaphore do
     end
 
     it "should prevent another semaphore with same name to lock" do
-      @semaphore.with_lock { @testSemaphore.try_lock.should be_false }
+      @semaphore.lock
+      @testSemaphore.with_lock { @tryLockSemaphore.try_lock.should be_false }
     end
 
     it "should allow another semaphore with same name to lock afterwards" do
@@ -114,7 +117,8 @@ describe CgSemaphore::Officer::OwnedSemaphore do
     end
 
     it "should prevent another semaphore with same name to lock" do
-      @semaphore.with_try_lock { @testSemaphore.try_lock.should be_false }
+      @semaphore.lock
+      @testSemaphore.with_try_lock { @tryLockSemaphore.try_lock.should be_false }
     end
 
     it "should allow another semaphore with same name to lock afterwards" do

@@ -51,6 +51,15 @@ describe CgSemaphore::Semaphore do
       @wrappedSemaphore.should_receive(:unlock).once
       @semaphore.unlock
     end
+
+    it "should reset the lock index" do
+      @wrappedSemaphore.stub(:lock) { '0' }
+      @wrappedSemaphore.stub(:unlock) { }
+      @semaphore.lock
+      @semaphore.lock_index.should eq '0'
+      @semaphore.unlock
+      @semaphore.lock_index.should be_nil
+    end
   end
 
   context "unsurpressed" do
@@ -135,7 +144,7 @@ describe CgSemaphore::Semaphore do
         @wrappedSemaphore.stub(:try_lock) { '123' }
         @wrappedSemaphore.stub(:unlock) { true }
         @semaphore.with_try_lock {}
-        @semaphore.lock_index.should eq '123'
+        @semaphore.lock_index.should be_nil
       end
 
       it "should forward the block exception" do
