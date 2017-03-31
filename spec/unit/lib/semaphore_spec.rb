@@ -27,12 +27,12 @@ describe CgSemaphore::Semaphore do
     it "should call lock on wrapped semaphore" do
       @wrappedSemaphore.stub(:lock) { }
       @wrappedSemaphore.should_receive(:lock).once
-      @semaphore.lock
+      @semaphore.lock.should be_false
     end
 
     it "should store the lock index" do
       @wrappedSemaphore.stub(:lock) { '0' }
-      @semaphore.lock
+      @semaphore.lock.should be_true
       @semaphore.lock_index.should eq '0'
     end
   end

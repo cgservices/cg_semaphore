@@ -35,6 +35,7 @@ module CgSemaphore
       begin
         result = @semaphore.lock
         @lock_index = result unless result.nil?
+        result.nil? ? false : true
       rescue Exception => e
         handle_exception e
       end
@@ -115,14 +116,15 @@ module CgSemaphore
     end
 
     protected
-      def create_semaphore name, size
-        @@semaphore_class.new name, size
-      end
 
-      def handle_exception exception
-        raise exception unless @surpressed
-        self.class.rescue_surpressed_exception.call exception, self
-      end
+    def create_semaphore name, size
+      @@semaphore_class.new name, size
+    end
+
+    def handle_exception exception
+      raise exception unless @surpressed
+      self.class.rescue_surpressed_exception.call exception, self
+    end
 
   end
 end
