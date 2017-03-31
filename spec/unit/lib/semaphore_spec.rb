@@ -27,12 +27,12 @@ describe CgSemaphore::Semaphore do
     it "should call lock on wrapped semaphore" do
       @wrappedSemaphore.stub(:lock) { }
       @wrappedSemaphore.should_receive(:lock).once
-      @semaphore.lock.should be_false
+      @semaphore.lock.should eq false
     end
 
     it "should store the lock index" do
       @wrappedSemaphore.stub(:lock) { '0' }
-      @semaphore.lock.should be_true
+      @semaphore.lock.should eq true
       @semaphore.lock_index.should eq '0'
     end
   end
@@ -41,7 +41,12 @@ describe CgSemaphore::Semaphore do
     it "should call try_lock on wrapped semaphore" do
       @wrappedSemaphore.stub(:try_lock) { false }
       @wrappedSemaphore.should_receive(:try_lock).once
-      @semaphore.try_lock
+      @semaphore.try_lock.should eq false
+    end
+
+    it "should return true when there is a valid lock" do
+      @wrappedSemaphore.stub(:try_lock) { '123' }
+      @semaphore.try_lock.should eq true
     end
   end
 
@@ -58,7 +63,7 @@ describe CgSemaphore::Semaphore do
       @semaphore.lock
       @semaphore.lock_index.should eq '0'
       @semaphore.unlock
-      @semaphore.lock_index.should be_nil
+      @semaphore.lock_index.should eq nil
     end
   end
 
@@ -78,7 +83,7 @@ describe CgSemaphore::Semaphore do
 
       it "should store the lock index" do
         @wrappedSemaphore.stub(:try_lock) { '123' }
-        @semaphore.try_lock
+        @semaphore.try_lock.should eq true
         @semaphore.lock_index.should eq '123'
       end
     end
@@ -93,7 +98,7 @@ describe CgSemaphore::Semaphore do
           @semaphore.with_lock { block_executed = true }
         rescue
         end
-        block_executed.should be_true
+        block_executed.should eq true
       end
 
       it "should not execute the block if lock raises an exception" do
