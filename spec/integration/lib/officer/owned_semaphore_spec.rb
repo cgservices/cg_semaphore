@@ -8,11 +8,14 @@ describe CgSemaphore::Officer::OwnedSemaphore do
     @server_thread = Thread.new {@server.run}
 
     CgSemaphore::Officer.client = Officer::Client.new
-    @semaphore = CgSemaphore::Officer::OwnedSemaphore.new "testlock", 1
+    @semaphore = CgSemaphore::Officer::OwnedSemaphore.new "testlock", 2
 
     # using semaphore with an other client for testing
-    @testSemaphore = CgSemaphore::Officer::OwnedSemaphore.new "testlock", 1
-    @testSemaphore.client =  Officer::Client.new
+    @testSemaphore = CgSemaphore::Officer::OwnedSemaphore.new "testlock", 2
+    @testSemaphore.client = Officer::Client.new
+
+    @tryLockSemaphore = CgSemaphore::Officer::OwnedSemaphore.new "testlock", 2
+    @tryLockSemaphore.client = Officer::Client.new
 
     # wait until the server is running
     while !@server.running?; end
@@ -34,9 +37,17 @@ describe CgSemaphore::Officer::OwnedSemaphore do
       @semaphore.try_lock.should be_true
     end
 
+    it "should return the correct lock index" do
+      @semaphore.lock.should eq '0'
+      @testSemaphore.lock.should eq '1'
+      @semaphore.lock.should be_nil
+      @tryLockSemaphore.try_lock.should be_false
+    end
+
     it "should prevent another semaphore with same name to lock" do
-      @semaphore.lock
-      @testSemaphore.try_lock.should be_false
+      @semaphore.lock.should eq '0'
+      @testSemaphore.lock.should eq '1'
+      @tryLockSemaphore.try_lock.should be_false
     end
 
     it "should raise an exception if not connected" do
@@ -47,12 +58,13 @@ describe CgSemaphore::Officer::OwnedSemaphore do
 
   describe "#try_lock" do
     it "should succeed to lock" do
-      @semaphore.try_lock.should be_true
+      @semaphore.try_lock.should eq '0'
     end
 
     it "should prevent another semaphore with same name to lock" do
       @semaphore.try_lock
-      @testSemaphore.try_lock.should be_false
+      @testSemaphore.try_lock
+      @tryLockSemaphore.try_lock.should be_false
     end
 
     it "should raise an exception if not connected" do
@@ -66,7 +78,7 @@ describe CgSemaphore::Officer::OwnedSemaphore do
       it "should allow another semaphore with same name to lock" do
         @semaphore.lock
         @semaphore.unlock
-        @testSemaphore.try_lock.should be_true
+        @testSemaphore.try_lock.should eq '0'
       end
     end
 
@@ -74,7 +86,7 @@ describe CgSemaphore::Officer::OwnedSemaphore do
       it "should allow another semaphore with same name to lock" do
         @semaphore.try_lock
         @semaphore.unlock
-        @testSemaphore.try_lock.should be_true
+        @testSemaphore.try_lock.should eq '0'
       end
     end
   end
@@ -87,12 +99,13 @@ describe CgSemaphore::Officer::OwnedSemaphore do
     end
 
     it "should prevent another semaphore with same name to lock" do
-      @semaphore.with_lock { @testSemaphore.try_lock.should be_false }
+      @semaphore.lock
+      @testSemaphore.with_lock { @tryLockSemaphore.try_lock.should be_false }
     end
 
     it "should allow another semaphore with same name to lock afterwards" do
       @semaphore.with_lock { }
-      @testSemaphore.try_lock.should be_true
+      @testSemaphore.try_lock.should eq '0'
     end
   end
 
@@ -104,12 +117,13 @@ describe CgSemaphore::Officer::OwnedSemaphore do
     end
 
     it "should prevent another semaphore with same name to lock" do
-      @semaphore.with_try_lock { @testSemaphore.try_lock.should be_false }
+      @semaphore.lock
+      @testSemaphore.with_try_lock { @tryLockSemaphore.try_lock.should be_false }
     end
 
     it "should allow another semaphore with same name to lock afterwards" do
       @semaphore.with_try_lock { }
-      @testSemaphore.try_lock.should be_true
+      @testSemaphore.try_lock.should eq '0'
     end
   end
 end

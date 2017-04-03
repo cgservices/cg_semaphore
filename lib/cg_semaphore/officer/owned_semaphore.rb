@@ -15,11 +15,14 @@ module CgSemaphore
         raise ::Officer::LockTimeoutError.new("queue=#{queue}") if result == 'timed_out'
         raise ::Officer::LockQueuedMaxError.new("queue=#{queue}") if result == 'queue_maxed'
         raise ::Officer::LockError unless %w(acquired already_acquired).include?(result)
+
+        response['id']
       end
 
       def try_lock
-        response = proper_client.lock build_name, {:timeout => Officer.timeout, :queue_max => 1}
-        response['name'] == build_name && response['result'] == "acquired"
+        response = proper_client.lock build_name, {:timeout => Officer.timeout, :queue_max => @size}
+        return response['id'] if response['name'] == build_name && response['result'] == "acquired"
+        false
       end
 
       def unlock
@@ -27,13 +30,14 @@ module CgSemaphore
       end
 
       private
-        def proper_client
-          @client || Officer.client
-        end
 
-        def build_name
-          "#{@name}|#{@size}"
-        end
+      def proper_client
+        @client || Officer.client
+      end
+
+      def build_name
+        "#{@name}|#{@size}"
+      end
 
     end
   end

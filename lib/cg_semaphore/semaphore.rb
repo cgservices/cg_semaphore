@@ -1,6 +1,7 @@
 module CgSemaphore
   class Semaphore
-    attr_reader :surpressed
+    attr_reader :surpressed, :lock_index
+
     @@rescue_surpressed_exception = lambda { |e, s| }
     @@semaphore_class = nil
 
@@ -32,7 +33,9 @@ module CgSemaphore
 
     def lock
       begin
-        @semaphore.lock
+        result = @semaphore.lock
+        @lock_index = result unless result.nil?
+        result.nil? ? false : true
       rescue Exception => e
         handle_exception e
       end
@@ -42,6 +45,8 @@ module CgSemaphore
       result = false
       begin
         result = @semaphore.try_lock
+        @lock_index = result if result
+        result = true if result
       rescue Exception => e
         handle_exception e
         result = true # will only be reached if surpressed
@@ -52,6 +57,7 @@ module CgSemaphore
     def unlock
       begin
         @semaphore.unlock
+        @lock_index = nil
       rescue Exception => e
         handle_exception e
       end
@@ -110,14 +116,15 @@ module CgSemaphore
     end
 
     protected
-      def create_semaphore name, size
-        @@semaphore_class.new name, size
-      end
 
-      def handle_exception exception
-        raise exception unless @surpressed
-        self.class.rescue_surpressed_exception.call exception, self
-      end
+    def create_semaphore name, size
+      @@semaphore_class.new name, size
+    end
+
+    def handle_exception exception
+      raise exception unless @surpressed
+      self.class.rescue_surpressed_exception.call exception, self
+    end
 
   end
 end

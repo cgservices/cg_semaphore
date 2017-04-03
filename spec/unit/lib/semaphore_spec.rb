@@ -2,7 +2,6 @@ require File.expand_path(File.dirname(__FILE__) + '/../../spec_helper')
 
 describe CgSemaphore::Semaphore do
   before do
-
     class SemaphoriedDummyClass
       include CgSemaphore::Semaphorify
     end
@@ -27,24 +26,44 @@ describe CgSemaphore::Semaphore do
   describe "#lock" do
     it "should call lock on wrapped semaphore" do
       @wrappedSemaphore.stub(:lock) { }
-      @semaphore.should_receive(:lock).once
-      @semaphore.lock
+      @wrappedSemaphore.should_receive(:lock).once
+      @semaphore.lock.should eq false
+    end
+
+    it "should store the lock index" do
+      @wrappedSemaphore.stub(:lock) { '0' }
+      @semaphore.lock.should eq true
+      @semaphore.lock_index.should eq '0'
     end
   end
 
   describe "#try_lock" do
     it "should call try_lock on wrapped semaphore" do
       @wrappedSemaphore.stub(:try_lock) { false }
-      @semaphore.should_receive(:try_lock).once
-      @semaphore.try_lock
+      @wrappedSemaphore.should_receive(:try_lock).once
+      @semaphore.try_lock.should eq false
+    end
+
+    it "should return true when there is a valid lock" do
+      @wrappedSemaphore.stub(:try_lock) { '123' }
+      @semaphore.try_lock.should eq true
     end
   end
 
   describe "#unlock" do
     it "should call unlock on wrapped semaphore" do
       @wrappedSemaphore.stub(:unlock) { }
-      @semaphore.should_receive(:unlock).once
+      @wrappedSemaphore.should_receive(:unlock).once
       @semaphore.unlock
+    end
+
+    it "should reset the lock index" do
+      @wrappedSemaphore.stub(:lock) { '0' }
+      @wrappedSemaphore.stub(:unlock) { }
+      @semaphore.lock
+      @semaphore.lock_index.should eq '0'
+      @semaphore.unlock
+      @semaphore.lock_index.should eq nil
     end
   end
 
@@ -61,6 +80,12 @@ describe CgSemaphore::Semaphore do
         @wrappedSemaphore.stub(:try_lock) { raise StandardError.new('This exception should be forwarded.')  }
         expect { @semaphore.try_lock }.to raise_exception(StandardError, 'This exception should be forwarded.')
       end
+
+      it "should store the lock index" do
+        @wrappedSemaphore.stub(:try_lock) { '123' }
+        @semaphore.try_lock.should eq true
+        @semaphore.lock_index.should eq '123'
+      end
     end
 
     describe "#with_lock" do
@@ -73,7 +98,7 @@ describe CgSemaphore::Semaphore do
           @semaphore.with_lock { block_executed = true }
         rescue
         end
-        block_executed.should be_true
+        block_executed.should eq true
       end
 
       it "should not execute the block if lock raises an exception" do
@@ -118,6 +143,13 @@ describe CgSemaphore::Semaphore do
         rescue
         end
         block_executed.should be_false
+      end
+
+      it "should store the lock index" do
+        @wrappedSemaphore.stub(:try_lock) { '123' }
+        @wrappedSemaphore.stub(:unlock) { true }
+        @semaphore.with_try_lock {}
+        @semaphore.lock_index.should be_nil
       end
 
       it "should forward the block exception" do
