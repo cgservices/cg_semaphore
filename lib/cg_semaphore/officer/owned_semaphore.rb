@@ -7,13 +7,14 @@ module CgSemaphore
       attr_accessor :client
 
       def lock
-        response = proper_client.lock build_name, {:timeout => Officer.timeout}
+        timeout = Officer.timeout
+        response = proper_client.lock build_name, {timeout: timeout}
 
         result = response['result']
         queue = (response['queue'] || []).join ','
 
-        raise ::Officer::LockTimeoutError.new("queue=#{queue}") if result == 'timed_out'
-        raise ::Officer::LockQueuedMaxError.new("queue=#{queue}") if result == 'queue_maxed'
+        raise ::Officer::LockTimeoutError.new("name=#{build_name}, timeout=#{timeout}, queue=#{queue}") if result == 'timed_out'
+        raise ::Officer::LockQueuedMaxError.new("name=#{build_name}, timeout=#{timeout}, queue=#{queue}") if result == 'queue_maxed'
         raise ::Officer::LockError unless %w(acquired already_acquired).include?(result)
 
         response['id']

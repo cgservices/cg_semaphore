@@ -9,7 +9,7 @@ Gem::Specification.new do |gem|
   gem.test_files    = gem.files.grep(%r{^(test|spec|features)/})
   gem.name          = 'cg_semaphore'
   gem.require_paths = ['lib']
-  gem.version       = "0.10.0"
+  gem.version       = "0.10.1"
 
   gem.add_dependency("officer", ['>= 0.11.0'])
   gem.add_development_dependency('rake', ['>= 0'])
