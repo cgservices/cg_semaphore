@@ -11,7 +11,7 @@ GIT
 PATH
   remote: .
   specs:
-    cg_semaphore (0.10.1)
+    cg_semaphore (0.10.2)
       officer (>= 0.11.0)
 
 GEM
