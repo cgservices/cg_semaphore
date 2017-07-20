@@ -11,17 +11,23 @@ GIT
 PATH
   remote: .
   specs:
-    cg_semaphore (0.10.0)
+    cg_semaphore (0.10.2)
       officer (>= 0.11.0)
 
 GEM
   remote: https://rubygems.org/
   specs:
     choice (0.1.6)
+    coderay (1.1.1)
     daemons (1.1.9)
     diff-lcs (1.2.3)
-    eventmachine (1.0.3)
-    json (1.7.7)
+    eventmachine (1.0.4)
+    json (1.8.2)
+    method_source (0.8.2)
+    pry (0.10.4)
+      coderay (~> 1.1.0)
+      method_source (~> 0.8.1)
+      slop (~> 3.4)
     rake (10.0.4)
     rspec (2.13.0)
       rspec-core (~> 2.13.0)
@@ -31,6 +37,7 @@ GEM
     rspec-expectations (2.13.0)
       diff-lcs (>= 1.1.3, < 2.0)
     rspec-mocks (2.13.1)
+    slop (3.6.0)
 
 PLATFORMS
   ruby
@@ -38,6 +45,7 @@ PLATFORMS
 DEPENDENCIES
   cg_semaphore!
   officer!
+  pry
   rake
   rspec
 

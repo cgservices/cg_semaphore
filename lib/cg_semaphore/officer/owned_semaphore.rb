@@ -8,7 +8,7 @@ module CgSemaphore
 
       def lock
         timeout = Officer.timeout
-        response = proper_client.lock build_name, {timeout: timeout}
+        response = proper_client.lock build_name, { timeout: timeout }
 
         result = response['result']
         queue = (response['queue'] || []).join ','
@@ -17,12 +17,14 @@ module CgSemaphore
         raise ::Officer::LockQueuedMaxError.new("name=#{build_name}, timeout=#{timeout}, queue=#{queue}") if result == 'queue_maxed'
         raise ::Officer::LockError unless %w(acquired already_acquired).include?(result)
 
-        response['id']
+        return response['id'] if response.key?('id')
       end
 
       def try_lock
-        response = proper_client.lock build_name, {:timeout => Officer.timeout, :queue_max => @size}
-        return response['id'] if response['name'] == build_name && response['result'] == "acquired"
+        response = proper_client.lock build_name, { timeout: Officer.timeout, queue_max: @size }
+        if lock_acquired?(response)
+          return response.key?('id') ? response['id'] : true
+        end
         false
       end
 
@@ -40,6 +42,11 @@ module CgSemaphore
         "#{@name}|#{@size}"
       end
 
+      private
+
+      def lock_acquired?(response)
+        response['name'] == build_name && response['result'] == "acquired"
+      end
     end
   end
 end
